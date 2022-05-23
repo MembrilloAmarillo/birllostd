@@ -53,6 +53,9 @@ m_file* f_init( const char* path, m_flags mf  ) {
     GET_ERROR( ERROR_DEBUG_FORMAT, __FILE__, __LINE__ );
     exit( 1 );
   }
+
+  // Rewind file
+  lseek( f->fd, 0, SEEK_SET);
   
   return f;
   
@@ -61,17 +64,33 @@ m_file* f_init( const char* path, m_flags mf  ) {
 
 // string s must be initiated before calling this function
 void f_read( m_file* f, string* s ) {
-  char* buf = ( char* )malloc( f->length + 1 * sizeof( char ) );
 
+  lseek( f->fd, 0, SEEK_SET );
+  
+  char* buf = ( char* )malloc( f->length + 1 * sizeof( char ) );
+  
   if( buf == NULL ) {
     GET_ERROR( ERROR_DEBUG_FORMAT, __FILE__, __LINE__ );
   }
   
-  read( f->fd, buf, f->length );
+  ssize_t counted = read( f->fd, ( char* )buf, f->length );
 
   s_insert( s, buf, -1 );
 
+
+#if 0
+  fprintf( stdout, "Return of read: %zu\n", counted );
+  fprintf( stdout, "File length: %d\n", f->length );
+  fprintf( stdout, "File desc  : %d\n", f->fd     );
+  fprintf( stdout, "Buf description: %s\n", ( char* )buf   );
+#endif  
+  
   free( buf );
+}
+
+void f_write( m_file* f, string* s ) {
+
+  ssize_t return_write = write( f->fd, s->_s, s->offset );
 }
 
 void f_destroy( m_file* f ) {

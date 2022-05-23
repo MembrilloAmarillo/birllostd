@@ -75,11 +75,11 @@ void s_insert( string* s, const char* val, int off_start ) {
 
     } else {
 
-      if( off_start >= s->offset ) {
+      if( ( uint32_t )off_start >= s->offset ) {
 
 	s->offset = off_start + val_length;
 	
-      } else if ( off_start + val_length > s->offset ) {
+      } else if ( ( uint32_t )off_start + val_length > s->offset ) {
 
 	s->offset -= ( off_start + val_length );
 
