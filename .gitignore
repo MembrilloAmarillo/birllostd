@@ -1,0 +1,4 @@
+# Random files to not include
+*.out
+*~
+*.o
