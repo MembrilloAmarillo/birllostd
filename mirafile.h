@@ -65,21 +65,25 @@ m_file* f_init( const char* path, m_flags mf  ) {
 // string s must be initiated before calling this function
 void f_read( m_file* f, string* s ) {
 
-  lseek( f->fd, 0, SEEK_SET );
+  if( f == NULL || s == NULL ) {
+    GET_ERROR( ERROR_DEBUG_FORMAT, __FILE__, __LINE__ );
+    exit( 1 );
+  }
   
-  char* buf = ( char* )malloc( f->length + 1 * sizeof( char ) );
+  lseek( f->fd, 0, SEEK_CUR );
+  char* buf = ( char* )malloc( f->length * sizeof( char ) + 1 );
   
   if( buf == NULL ) {
     GET_ERROR( ERROR_DEBUG_FORMAT, __FILE__, __LINE__ );
+    exit( 1 );
   }
   
-  ssize_t counted = read( f->fd, ( char* )buf, f->length );
-
+  read( f->fd, ( char* )buf, f->length );
+  
   s_insert( s, buf, -1 );
 
 
 #if 0
-  fprintf( stdout, "Return of read: %zu\n", counted );
   fprintf( stdout, "File length: %d\n", f->length );
   fprintf( stdout, "File desc  : %d\n", f->fd     );
   fprintf( stdout, "Buf description: %s\n", ( char* )buf   );
@@ -91,6 +95,7 @@ void f_read( m_file* f, string* s ) {
 void f_write( m_file* f, string* s ) {
 
   ssize_t return_write = write( f->fd, s->_s, s->offset );
+  f->length += s->offset;
 }
 
 void f_destroy( m_file* f ) {

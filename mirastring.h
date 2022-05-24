@@ -64,6 +64,11 @@ int s_strlen( const char* val ) {
 // it uses off_start as starting offset
 
 void s_insert( string* s, const char* val, int off_start ) {
+  if( val == NULL || s == NULL ) {
+    GET_ERROR( ERROR_DEBUG_FORMAT, __FILE__, __LINE__ );
+    exit( 1 );
+  }
+  
   int val_length = s_strlen( val );
   
   if( val_length != -1 ) {
